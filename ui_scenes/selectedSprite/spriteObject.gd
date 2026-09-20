@@ -72,6 +72,8 @@ var ignoreBounce = false
 #Animation
 var frames = 1
 var animSpeed = 0
+# 0 = timer loop, 1 = rest + talk loop, 2 = volume picks frame
+var talkAnim = 0
 
 var remadePolygon = false
 
@@ -243,16 +245,52 @@ func _process(delta):
 	animation()
 
 func animation():
-	
-	var speed = max(float(animSpeed),Engine.max_fps*6.0)
-	if animSpeed > 0 and frames > 1:
-		if Global.animationTick % int((speed)/float(animSpeed)) == 0:
-			if sprite.frame == frames - 1:
-				sprite.frame = 0
-			else:
-				sprite.frame += 1
-	if frames > 1:
-		remakePolygon()
+	if frames <= 1:
+		sprite.frame = 0
+		return
+	match talkAnim:
+		1:
+			anim_talk_loop()
+		2:
+			anim_volume_frames()
+		_:
+			anim_timer_loop()
+	remakePolygon()
+
+func anim_step_ready() -> bool:
+	if animSpeed <= 0:
+		return false
+	var speed = max(float(animSpeed), Engine.max_fps * 6.0)
+	return Global.animationTick % int(speed / float(animSpeed)) == 0
+
+func anim_timer_loop():
+	if anim_step_ready():
+		if sprite.frame == frames - 1:
+			sprite.frame = 0
+		else:
+			sprite.frame += 1
+
+func anim_talk_loop():
+	if !Global.speaking:
+		sprite.frame = 0
+		return
+	if frames == 2:
+		sprite.frame = 1
+		return
+	if animSpeed <= 0:
+		sprite.frame = min(1, frames - 1)
+		return
+	if sprite.frame < 1:
+		sprite.frame = 1
+	if anim_step_ready():
+		sprite.frame += 1
+		if sprite.frame >= frames:
+			sprite.frame = 1
+
+func anim_volume_frames():
+	var last = frames - 1
+	var desired = int(clamp(round(Global.talkLevel * float(last)), 0, last))
+	sprite.frame = desired
 
 func setZIndex():
 	sprite.z_index = z
@@ -320,7 +358,7 @@ func drag(delta):
 	if dragSpeed == 0:
 		dragger.global_position = wob.global_position
 	else:
-		dragger.global_position = lerp(dragger.global_position,wob.global_position,1/dragSpeed)
+		dragger.global_position = lerp(dragger.global_position,wob.global_position,1.0/float(dragSpeed))
 		dragOrigin.global_position = dragger.global_position
 
 func wobble():
@@ -374,8 +412,8 @@ func remakePolygon():
 	
 	remadePolygon = true
 	
-func setClip(toggle):
-	if toggle:
+func setClip(enable):
+	if enable:
 		sprite.clip_children = CLIP_CHILDREN_AND_DRAW
 		
 		for node in getAllLinkedSprites():
@@ -385,7 +423,7 @@ func setClip(toggle):
 	else:
 		sprite.clip_children = CLIP_CHILDREN_DISABLED
 		
-	clipped = toggle
+	clipped = enable
 
 func getAllLinkedSprites():
 	var nodes = get_tree().get_nodes_in_group("saved")

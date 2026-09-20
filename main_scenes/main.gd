@@ -291,11 +291,24 @@ func _on_file_dialog_file_selected(path):
 	add_image(path)
 
 func _on_save_button_pressed():
-	$SaveDialog.visible = true
+	seed_dialog_from_last_avatar(saveDialog, true)
+	saveDialog.visible = true
 	
 
 func _on_load_button_pressed():
-	$LoadDialog.visible = true
+	seed_dialog_from_last_avatar(loadDialog)
+	loadDialog.visible = true
+
+func seed_dialog_from_last_avatar(dialog: FileDialog, as_save: bool = false):
+	var last = Saving.settings.get("lastAvatar", "")
+	if last == null or str(last) == "" or last == "default":
+		return
+	var os_path = last
+	if last.begins_with("user://") or last.begins_with("res://"):
+		os_path = ProjectSettings.globalize_path(last)
+	if as_save:
+		os_path = Saving.avatar_save_path(os_path)
+	dialog.current_path = os_path
 
 #LOAD AVATAR
 func _on_load_dialog_file_selected(path):
@@ -350,6 +363,8 @@ func _on_load_dialog_file_selected(path):
 			sprite.frames = data[item]["frames"]
 		if data[item].has("animSpeed"):
 			sprite.animSpeed = data[item]["animSpeed"]
+		if data[item].has("talkAnim"):
+			sprite.talkAnim = data[item]["talkAnim"]
 		if data[item].has("imageData"):
 			sprite.loadedImageData = data[item]["imageData"]
 		if data[item].has("clipped"):
@@ -370,6 +385,7 @@ func _on_load_dialog_file_selected(path):
 	
 #SAVE AVATAR
 func _on_save_dialog_file_selected(path):
+	path = Saving.avatar_save_path(path)
 	var data = {}
 	var nodes = get_tree().get_nodes_in_group("saved")
 	var id = 0
@@ -410,6 +426,7 @@ func _on_save_dialog_file_selected(path):
 			
 			data[id]["frames"] = child.frames
 			data[id]["animSpeed"] = child.animSpeed
+			data[id]["talkAnim"] = child.talkAnim
 			
 			data[id]["clipped"] = child.clipped
 			
@@ -485,6 +502,7 @@ func _on_duplicate_button_pressed():
 	
 	sprite.frames = Global.heldSprite.frames
 	sprite.animSpeed = Global.heldSprite.animSpeed
+	sprite.talkAnim = Global.heldSprite.talkAnim
 	
 	sprite.costumeLayers = Global.heldSprite.costumeLayers
 	

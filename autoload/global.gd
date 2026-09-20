@@ -39,6 +39,7 @@ var volumeSensitivity = 0.0
 
 var volumeLimit = 0.0
 var senseLimit = 0.0
+var talkLevel = 0.0
 
 #Speak Signals
 signal startSpeaking
@@ -93,6 +94,10 @@ func _process(delta):
 	
 	if volume>volumeLimit:
 		volumeSensitivity = 1.0
+	
+	var peak = max(volumeLimit, 0.00001)
+	var target = clamp(volume / peak, 0.0, 1.0)
+	talkLevel = lerp(talkLevel, target, clamp(delta * 12.0, 0.0, 1.0))
 	
 	var prev = speaking
 	speaking = volumeSensitivity > senseLimit

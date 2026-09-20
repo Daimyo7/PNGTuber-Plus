@@ -59,7 +59,17 @@ var settings = {
 	"bounceOnCostumeChange":false,
 }
 
+const AVATAR_EXTENSION = ".pngtuber"
+const LEGACY_AVATAR_EXTENSION = ".save"
+
 var settingsPath = "user://settings.pngtp"
+
+func avatar_save_path(path: String) -> String:
+	if path.to_lower().ends_with(AVATAR_EXTENSION):
+		return path
+	if path.to_lower().ends_with(LEGACY_AVATAR_EXTENSION):
+		return path.substr(0, path.length() - LEGACY_AVATAR_EXTENSION.length()) + AVATAR_EXTENSION
+	return path + AVATAR_EXTENSION
 
 func _ready():
 	var datas = read_save(settingsPath)
