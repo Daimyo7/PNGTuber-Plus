@@ -14637,7 +14637,7 @@ size = Vector2i(360, 360)
 ok_button_text = "Open"
 mode_overrides_title = false
 file_mode = 0
-access = 1
+access = 2
 filters = PackedStringArray("*.png")
 
 [node name="ReplaceDialog" type="FileDialog" parent="."]
@@ -14647,7 +14647,7 @@ size = Vector2i(360, 360)
 ok_button_text = "Open"
 mode_overrides_title = false
 file_mode = 0
-access = 1
+access = 2
 filters = PackedStringArray("*.png")
 
 [node name="SaveDialog" type="FileDialog" parent="."]
@@ -14656,8 +14656,8 @@ position = Vector2i(161, 160)
 size = Vector2i(392, 360)
 ok_button_text = "Save"
 mode_overrides_title = false
-access = 1
-filters = PackedStringArray("*.save")
+access = 2
+filters = PackedStringArray("*.pngtuber ; PNGTuber Avatar")
 
 [node name="LoadDialog" type="FileDialog" parent="."]
 title = "Load Avatar"
@@ -14666,8 +14666,8 @@ size = Vector2i(360, 360)
 ok_button_text = "Open"
 mode_overrides_title = false
 file_mode = 0
-access = 1
-filters = PackedStringArray("*.save")
+access = 2
+filters = PackedStringArray("*.pngtuber ; PNGTuber Avatar", "*.save ; Legacy Avatar")
 show_hidden_files = true
 
 [node name="Chain" parent="." instance=ExtResource("19_mt1os")]

@@ -1,0 +1,50 @@
+{
+  "layers": [
+    {
+      "file": "body.png",
+      "identification": 1001,
+      "parentId": null,
+      "zindex": -1,
+      "drag": 0,
+      "xAmp": 9,
+      "xFrq": 0.004,
+      "yAmp": 11,
+      "yFrq": 0.008,
+      "stretchAmount": 0.25
+    },
+    {
+      "file": "head.png",
+      "identification": 1002,
+      "parentId": 1001,
+      "drag": 1
+    },
+    {
+      "file": "hair.png",
+      "identification": 1003,
+      "parentId": 1002,
+      "zindex": -2,
+      "stretchAmount": 2
+    },
+    {
+      "file": "mouth.png",
+      "identification": 1004,
+      "parentId": 1002,
+      "showTalk": 0,
+      "frames": 4,
+      "animSpeed": 8,
+      "talkAnim": 1
+    },
+    {
+      "file": "eyes_open.png",
+      "identification": 1006,
+      "parentId": 1002,
+      "showBlink": 1
+    },
+    {
+      "file": "eyes_closed.png",
+      "identification": 1007,
+      "parentId": 1002,
+      "showBlink": 2
+    }
+  ]
+}

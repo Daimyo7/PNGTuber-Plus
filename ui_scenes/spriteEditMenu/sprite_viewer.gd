@@ -10,9 +10,19 @@ extends Node2D
 
 @onready var coverCollider = $Area2D/CollisionShape2D
 
+const TALK_ANIM_NAMES = ["loop (idle)", "talk loop", "volume frames"]
+var talkAnimButton: OptionButton = null
 
 func _ready():
 	Global.spriteEdit = self
+	talkAnimButton = OptionButton.new()
+	talkAnimButton.position = Vector2(10, 1072)
+	talkAnimButton.size = Vector2(223, 24)
+	talkAnimButton.theme = $Animation/animSpeed.theme
+	for i in TALK_ANIM_NAMES.size():
+		talkAnimButton.add_item(TALK_ANIM_NAMES[i], i)
+	talkAnimButton.item_selected.connect(_on_talk_anim_selected)
+	$Animation.add_child(talkAnimButton)
 	
 func setImage():
 	if Global.heldSprite == null:
@@ -66,6 +76,8 @@ func setImage():
 
 	$Animation/animFramesLabel.text = "sprite frames: " + str(Global.heldSprite.frames)
 	$Animation/animFrames.value = Global.heldSprite.frames
+	if talkAnimButton != null:
+		talkAnimButton.select(int(clamp(Global.heldSprite.talkAnim, 0, 2)))
 	
 	$VisToggle/setToggle/Label.text = "toggle: \"" + Global.heldSprite.toggle +  "\""
 	
@@ -335,6 +347,12 @@ func _on_anim_frames_value_changed(value):
 	Global.heldSprite.frames = value
 	spriteSpin.hframes = Global.heldSprite.frames
 	Global.heldSprite.changeFrames()
+
+func _on_talk_anim_selected(index):
+	if Global.heldSprite == null:
+		return
+	Global.heldSprite.talkAnim = index
+	Global.pushUpdate("Talk anim: " + TALK_ANIM_NAMES[index])
 
 
 func _on_clip_linked_toggled(button_pressed):

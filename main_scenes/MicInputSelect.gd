@@ -4,11 +4,17 @@ extends Node2D
 @onready var container = $ScrollContainer/VBoxContainer
 
 func _ready():
-	showMicMenu()
+	visibility_changed.connect(_on_visibility_changed)
+	if visible:
+		showMicMenu()
+
+func _on_visibility_changed():
+	if visible:
+		showMicMenu()
 
 func showMicMenu():
 	for child in container.get_children():
-		child.queue_free()
+		child.free()
 	
 	var inputList = AudioServer.get_input_device_list()
 	for input in inputList:
